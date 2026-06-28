@@ -418,9 +418,6 @@ function Kanban() {
                     {getColTasks("todo").length}
                   </span>
                 </div>
-                <button className="text-outline hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined">more_horiz</span>
-                </button>
               </div>
               <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar pb-8">
                 {getColTasks("todo").map(renderCard)}
@@ -436,9 +433,6 @@ function Kanban() {
                     {getColTasks("inprogress").length}
                   </span>
                 </div>
-                <button className="text-outline hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined">more_horiz</span>
-                </button>
               </div>
               <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar pb-8">
                 {getColTasks("inprogress").map(renderCard)}
@@ -454,9 +448,6 @@ function Kanban() {
                     {getColTasks("done").length}
                   </span>
                 </div>
-                <button className="text-outline hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined">more_horiz</span>
-                </button>
               </div>
               <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar pb-8">
                 {getColTasks("done").map(renderCard)}
