@@ -11,6 +11,9 @@ import { NotFoundError } from "./utils/appError.js";
 
 const app = express();
 
+// Trust reverse proxy (needed for Render & express-rate-limit)
+app.set("trust proxy", 1);
+
 // Security Headers
 app.use(helmet());
 
