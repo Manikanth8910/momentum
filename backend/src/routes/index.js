@@ -11,6 +11,11 @@ import { successResponse, errorResponse } from "../utils/apiResponse.js";
 
 const router = express.Router();
 
+// Root endpoint for default health checkers
+router.get("/", (req, res) => {
+  res.status(200).json({ message: "Momentum API is running" });
+});
+
 // Health check endpoint
 router.get("/health", (req, res) => {
   const dbStatus = mongoose.connection.readyState;
