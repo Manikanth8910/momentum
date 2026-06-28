@@ -42,7 +42,14 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalizedResponse = await normalizeCatastrophicSsrResponse(response);
+      
+      // Inject COOP headers for Google OAuth popups
+      const finalResponse = new Response(normalizedResponse.body, normalizedResponse);
+      finalResponse.headers.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+      finalResponse.headers.set("Cross-Origin-Embedder-Policy", "unsafe-none");
+      
+      return finalResponse;
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
