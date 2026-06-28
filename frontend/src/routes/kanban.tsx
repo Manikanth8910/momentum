@@ -33,12 +33,17 @@ interface Task {
 function Kanban() {
   useAuthGuard();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newPriority, setNewPriority] = useState<"High" | "Medium" | "Low">("Medium");
   const [viewType, setViewType] = useState<"Board" | "List" | "Timeline">("Board");
+  const [filterPriority, setFilterPriority] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<"None" | "Priority" | "Date">("None");
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -56,7 +61,7 @@ function Kanban() {
         if (data.success && data.data && Array.isArray(data.data.tasks)) {
           const mappedTasks: Task[] = data.data.tasks.map((t: any) => ({
             id: t._id,
-            code: t.code || `ENG-${Math.floor(100 + Math.random() * 900)}`,
+            code: t.code || `TSK-${t._id ? t._id.substring(t._id.length - 4).toUpperCase() : '0000'}`,
             title: t.title,
             description: t.description || "",
             priority: t.priority || "Medium",
@@ -68,6 +73,8 @@ function Kanban() {
         }
       } catch (err) {
         console.error("Failed to fetch tasks:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchTasks();
@@ -111,7 +118,7 @@ function Kanban() {
         const t = data.data;
         const newTask: Task = {
           id: t._id,
-          code: t.code || `ENG-${Math.floor(100 + Math.random() * 900)}`,
+          code: t.code || `TSK-${t._id ? t._id.substring(t._id.length - 4).toUpperCase() : '0000'}`,
           title: t.title,
           description: t.description || "",
           priority: t.priority || "Medium",
@@ -191,7 +198,7 @@ function Kanban() {
   };
 
   const getColTasks = (col: "todo" | "inprogress" | "done") => {
-    return tasks.filter((t) => {
+    let colTasks = tasks.filter((t) => {
       if (t.column !== col) return false;
       const query = searchQuery.toLowerCase();
       return (
@@ -201,6 +208,19 @@ function Kanban() {
         (t.tags && t.tags.some((tag) => tag.toLowerCase().includes(query)))
       );
     });
+
+    if (filterPriority) {
+       colTasks = colTasks.filter(t => t.priority === filterPriority);
+    }
+    
+    if (sortBy === "Priority") {
+       const priorityScore = { "High": 3, "Medium": 2, "Low": 1 };
+       colTasks.sort((a, b) => priorityScore[b.priority as keyof typeof priorityScore] - priorityScore[a.priority as keyof typeof priorityScore]);
+    } else if (sortBy === "Date") {
+       colTasks.sort((a, b) => new Date(a.dueDate || "2099-12-31").getTime() - new Date(b.dueDate || "2099-12-31").getTime());
+    }
+    
+    return colTasks;
   };
 
   const renderCard = (task: Task) => {
@@ -337,19 +357,43 @@ function Kanban() {
             </div>
             <div className="flex bg-[#f3f3fe] rounded-lg p-1 border border-outline-variant">
               <button onClick={() => setViewType("Board")} className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-md transition-colors ${viewType === "Board" ? "bg-white shadow-sm text-[#004ac6]" : "text-on-surface-variant hover:text-on-surface"}`}>Board</button>
-              <button onClick={() => { setViewType("List"); showToast("List view coming soon!"); }} className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-md transition-colors ${viewType === "List" ? "bg-white shadow-sm text-[#004ac6]" : "text-on-surface-variant hover:text-on-surface"}`}>List</button>
-              <button onClick={() => { setViewType("Timeline"); showToast("Timeline view coming soon!"); }} className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-md transition-colors ${viewType === "Timeline" ? "bg-white shadow-sm text-[#004ac6]" : "text-on-surface-variant hover:text-on-surface"}`}>Timeline</button>
+              <button disabled title="Planned for a future release" className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-md transition-colors opacity-50 cursor-not-allowed text-on-surface-variant`}>List</button>
+              <button disabled title="Planned for a future release" className={`px-2 md:px-3 py-1 text-xs font-semibold rounded-md transition-colors opacity-50 cursor-not-allowed text-on-surface-variant`}>Timeline</button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => showToast("Opening filters...")} className="flex items-center gap-1 px-2 md:px-3 py-1.5 border border-outline-variant rounded-lg text-xs font-semibold hover:bg-[#f3f3fe] transition-colors">
-              <span className="material-symbols-outlined !text-[16px]">filter_list</span>
-              <span className="hidden sm:inline">Filter</span>
-            </button>
-            <button onClick={() => showToast("Opening sort options...")} className="flex items-center gap-1 px-2 md:px-3 py-1.5 border border-outline-variant rounded-lg text-xs font-semibold hover:bg-[#f3f3fe] transition-colors">
-              <span className="material-symbols-outlined !text-[16px]">swap_vert</span>
-              <span className="hidden sm:inline">Sort</span>
-            </button>
+          <div className="flex items-center gap-2 relative">
+            <div className="relative">
+              <button onClick={() => setShowFilterDropdown(!showFilterDropdown)} className="flex items-center gap-1 px-2 md:px-3 py-1.5 border border-outline-variant rounded-lg text-xs font-semibold hover:bg-[#f3f3fe] transition-colors relative">
+                <span className="material-symbols-outlined !text-[16px]">filter_list</span>
+                <span className="hidden sm:inline">Filter {filterPriority && "•"}</span>
+              </button>
+              {showFilterDropdown && (
+                <div className="absolute top-full mt-1 right-0 w-32 bg-white shadow-lg border border-outline-variant rounded-lg z-50 flex flex-col p-1 text-left">
+                  <div className="px-2 py-1 text-[10px] text-secondary font-bold uppercase tracking-wider">Priority</div>
+                  {["High", "Medium", "Low"].map(p => (
+                    <button key={p} onClick={() => setFilterPriority(p === filterPriority ? null : p)} className={`px-2 py-1.5 text-xs text-left rounded-md ${filterPriority === p ? "bg-[#004ac6]/10 text-[#004ac6]" : "hover:bg-slate-50"}`}>
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="relative">
+              <button onClick={() => setShowSortDropdown(!showSortDropdown)} className="flex items-center gap-1 px-2 md:px-3 py-1.5 border border-outline-variant rounded-lg text-xs font-semibold hover:bg-[#f3f3fe] transition-colors relative">
+                <span className="material-symbols-outlined !text-[16px]">swap_vert</span>
+                <span className="hidden sm:inline">Sort {sortBy !== "None" && "•"}</span>
+              </button>
+              {showSortDropdown && (
+                <div className="absolute top-full mt-1 right-0 w-32 bg-white shadow-lg border border-outline-variant rounded-lg z-50 flex flex-col p-1 text-left">
+                  {["None", "Priority", "Date"].map(s => (
+                    <button key={s} onClick={() => setSortBy(s as any)} className={`px-2 py-1.5 text-xs text-left rounded-md ${sortBy === s ? "bg-[#004ac6]/10 text-[#004ac6]" : "hover:bg-slate-50"}`}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-1 px-2 md:px-3 py-1.5 bg-[#004ac6] text-white rounded-lg text-xs font-semibold hover:bg-[#004ac6]/90 transition-all active:scale-95 shadow-sm">
               <span className="material-symbols-outlined !text-[16px]">add</span>
               <span className="hidden sm:inline">New Task</span>
@@ -358,8 +402,13 @@ function Kanban() {
         </div>
 
         {/* Scrollable Board Content */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-[#fafafa]">
-          <div className="flex h-full p-4 md:p-8 gap-4 md:gap-8 min-w-max">
+        {isLoading ? (
+          <div className="flex-1 flex justify-center items-center bg-[#fafafa]">
+            <div className="w-8 h-8 border-4 border-[#004ac6] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-x-auto overflow-y-hidden bg-[#fafafa]">
+            <div className="flex h-full p-4 md:p-8 gap-4 md:gap-8 min-w-max">
             {/* Column: To Do */}
             <div className="w-80 flex flex-col h-full group">
               <div className="flex items-center justify-between mb-4 px-1">
@@ -424,9 +473,10 @@ function Kanban() {
             </div>
           </div>
         </div>
+        )}
       </main>
 
-      {/* Add Task Modal */}
+      {/* Create Task Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">

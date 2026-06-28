@@ -136,8 +136,11 @@ function RootComponent() {
       const response = await origFetch(...args);
       if (response.status === 401) {
         const url = typeof args[0] === "string" ? args[0] : (args[0] as Request).url;
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || "localhost:5050/api";
+        const urlObj = new URL(url.startsWith("http") ? url : window.location.origin + url);
+        const isApiUrl = url.includes(baseUrl) || (baseUrl.startsWith("/") && urlObj.pathname.startsWith(baseUrl));
         // Only handle 401s from our own backend API
-        if (url.includes("localhost:5050/api")) {
+        if (isApiUrl) {
           localStorage.removeItem("token");
           if (!window.location.pathname.includes("/login")) {
             window.location.href = "/login";

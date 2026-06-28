@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import { apiFetch } from "../lib/api";
 import {
   ChevronLeft,
   ChevronRight,
@@ -52,112 +53,123 @@ interface Event {
   assignee?: string;
 }
 
-const INITIAL_EVENTS: Event[] = [
-  {
-    id: "1",
-    title: "Refactor Authentication Middleware",
-    description: "Consolidate redundant JWT checks and implement OAuth2 PKCE flow for desktop clients. Ensure all routes are guarded.",
-    priority: "High",
-    status: "In Progress",
-    date: "2026-06-28", // Today
-    time: "09:00 AM",
-    duration: "1h 30m",
-    tags: ["Security", "Backend"],
-    comments: [
-      { id: "c1", author: "Sarah Chen", text: "Please review the OAuth spec before starting.", time: "2h ago" },
-    ],
-    attachments: ["auth_flow_v2.pdf"],
-    assignee: "Alex Thorne",
-  },
-  {
-    id: "2",
-    title: "Design Review - Navigation System",
-    description: "Go over the new collapsible sidebar design and get alignment on transitions and mobile behavior.",
-    priority: "Medium",
-    status: "To Do",
-    date: "2026-06-28", // Today
-    time: "11:00 AM",
-    duration: "1h",
-    tags: ["Design", "V2"],
-    comments: [],
-    attachments: [],
-    assignee: "Alex Thorne",
-  },
-  {
-    id: "3",
-    title: "Database Index Optimization",
-    description: "Analyze slow query logs and add composite indexes to the workspace activities table.",
-    priority: "Medium",
-    status: "To Do",
-    date: "2026-06-26", // Past / Overdue if not done
-    time: "02:30 PM",
-    duration: "2h",
-    tags: ["Database", "Performance"],
-    comments: [],
-    attachments: [],
-    assignee: "Alex Thorne",
-  },
-  {
-    id: "4",
-    title: "Release Momentum v2.4",
-    description: "Deploy the latest sprint features to production. Run sanity checks and monitor error logs.",
-    priority: "High",
-    status: "To Do",
-    date: "2026-06-30",
-    time: "10:00 AM",
-    duration: "1h",
-    tags: ["Release", "Ops"],
-    comments: [
-      { id: "c2", author: "Jordan Miller", text: "Staging checks are all green.", time: "1d ago" },
-    ],
-    attachments: ["release_changelog.md"],
-    assignee: "Alex Thorne",
-  },
-  {
-    id: "5",
-    title: "Update Typography Tokens",
-    description: "Sync Inter font weights across desktop and web application styling files.",
-    priority: "Low",
-    status: "Done",
-    date: "2026-06-27",
-    time: "04:00 PM",
-    duration: "45m",
-    tags: ["Design System"],
-    comments: [],
-    attachments: [],
-    assignee: "Alex Thorne",
-  },
-];
 
-// Helper for generating days of June 2026
-// June 1, 2026 is a Monday. June has 30 days.
-// A 5-week grid of 35 days (June 1 - July 5) fits perfectly.
-const JUNE_2026_DAYS = Array.from({ length: 35 }, (_, i) => {
-  const dayNum = i + 1;
-  if (dayNum <= 30) {
-    return {
-      dateString: `2026-06-${dayNum.toString().padStart(2, "0")}`,
-      dayOfMonth: dayNum,
-      isCurrentMonth: true,
-      dayOfWeek: i % 7, // 0 = Mon, 6 = Sun
-    };
-  } else {
-    const nextMonthDay = dayNum - 30;
-    return {
-      dateString: `2026-07-${nextMonthDay.toString().padStart(2, "0")}`,
-      dayOfMonth: nextMonthDay,
+
+
+const generateCalendarDays = (year: number, month: number) => {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  
+  let firstDayIndex = firstDay.getDay() - 1;
+  if (firstDayIndex === -1) firstDayIndex = 6; 
+  
+  const daysInMonth = lastDay.getDate();
+  const days = [];
+  
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+  for (let i = firstDayIndex - 1; i >= 0; i--) {
+    const prevDate = new Date(year, month - 1, prevMonthLastDay - i);
+    days.push({
+      dateString: prevDate.toISOString().split("T")[0],
+      dayOfMonth: prevDate.getDate(),
       isCurrentMonth: false,
-      dayOfWeek: i % 7,
-    };
+      dayOfWeek: (prevDate.getDay() + 6) % 7,
+    });
   }
-});
+  
+  for (let i = 1; i <= daysInMonth; i++) {
+    const currDate = new Date(year, month, i);
+    days.push({
+      dateString: currDate.toISOString().split("T")[0],
+      dayOfMonth: i,
+      isCurrentMonth: true,
+      dayOfWeek: (currDate.getDay() + 6) % 7,
+    });
+  }
+  
+  const totalDays = days.length <= 35 ? 35 : 42;
+  const remaining = totalDays - days.length;
+  for (let i = 1; i <= remaining; i++) {
+    const nextDate = new Date(year, month + 1, i);
+    days.push({
+      dateString: nextDate.toISOString().split("T")[0],
+      dayOfMonth: i,
+      isCurrentMonth: false,
+      dayOfWeek: (nextDate.getDay() + 6) % 7,
+    });
+  }
+  
+  return days;
+};
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function CalendarPage() {
-  const [events, setEvents] = useState<Event[]>(INITIAL_EVENTS);
+
+  const [currentDate, setCurrentDate] = useState(() => new Date());
+  
+  const calendarDays = useMemo(() => {
+    return generateCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
+  }, [currentDate]);
+  
+  const currentWeekDays = useMemo(() => {
+    const todayStr = currentDate.toISOString().split("T")[0];
+    const todayIndex = calendarDays.findIndex((d: any) => d.dateString === todayStr);
+    const startOfWeek = todayIndex >= 0 ? Math.floor(todayIndex / 7) * 7 : 0;
+    return calendarDays.slice(startOfWeek, startOfWeek + 7);
+  }, [calendarDays, currentDate]);
+  
+  const todayStr = new Date().toISOString().split("T")[0];
+  const currentDateStr = currentDate.toISOString().split("T")[0];
+  
+  const prevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  };
+  const nextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  };
+  const goToday = () => {
+    setCurrentDate(new Date());
+  };
+
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentView, setCurrentView] = useState<"month" | "week" | "day" | "agenda">("month");
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(INITIAL_EVENTS[0]);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await apiFetch("/tasks");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data?.tasks)) {
+          const mappedEvents = data.data.tasks.map((t: any) => {
+            const dateObj = t.dueDate ? new Date(t.dueDate) : new Date();
+            return {
+              id: t._id,
+              title: t.title,
+              description: t.description || "",
+              priority: t.priority || "Medium",
+              status: t.status === "Completed" ? "Done" : t.status === "In Progress" ? "In Progress" : "To Do",
+              date: dateObj.toISOString().split("T")[0],
+              time: "09:00 AM", // default or extract if time exists
+              duration: t.estimatedTime ? `${t.estimatedTime}h` : "1h",
+              tags: t.labels || [],
+              comments: [],
+              attachments: [],
+              assignee: t.createdBy?.name || "Unassigned"
+            };
+          });
+          setEvents(mappedEvents);
+        }
+      } catch (err) {
+        console.error("Failed to fetch calendar events:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTasks();
+  }, []);
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<string>("All");
   
@@ -165,7 +177,7 @@ function CalendarPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
-  const [newDate, setNewDate] = useState("2026-06-28");
+  const [newDate, setNewDate] = useState(todayStr);
   const [newTime, setNewTime] = useState("10:00 AM");
   const [newDuration, setNewDuration] = useState("1h");
   const [newPriority, setNewPriority] = useState<"High" | "Medium" | "Low">("Medium");
@@ -203,33 +215,54 @@ function CalendarPage() {
   }, [filteredEvents]);
 
   // Handle Event Creation
-  const handleAddEvent = (e: React.FormEvent) => {
+  const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    const newEvent: Event = {
-      id: Date.now().toString(),
-      title: newTitle,
-      description: newDesc,
-      priority: newPriority,
-      status: newStatus,
-      date: newDate,
-      time: newTime,
-      duration: newDuration,
-      tags: newTags ? newTags.split(",").map((t) => t.trim()) : [],
-      comments: [],
-      attachments: [],
-      assignee: "Alex Thorne",
-    };
-
-    setEvents([...events, newEvent]);
-    setSelectedEvent(newEvent);
-    setIsAddModalOpen(false);
+    try {
+      const res = await apiFetch("/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newTitle,
+          description: newDesc,
+          priority: newPriority,
+          status: newStatus === "Done" ? "Completed" : newStatus,
+          dueDate: newDate,
+          estimatedTime: parseInt(newDuration) || 1,
+          labels: newTags ? newTags.split(",").map((t) => t.trim()) : [],
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const t = data.data;
+        const dateObj = t.dueDate ? new Date(t.dueDate) : new Date();
+        const newEvent: Event = {
+          id: t._id,
+          title: t.title,
+          description: t.description || "",
+          priority: t.priority || "Medium",
+          status: t.status === "Completed" ? "Done" : t.status === "In Progress" ? "In Progress" : "To Do",
+          date: dateObj.toISOString().split("T")[0],
+          time: newTime,
+          duration: newDuration,
+          tags: t.labels || [],
+          comments: [],
+          attachments: [],
+          assignee: "Alex Thorne",
+        };
+        setEvents([...events, newEvent]);
+        setSelectedEvent(newEvent);
+        setIsAddModalOpen(false);
+      }
+    } catch (err) {
+      console.error("Failed to create event:", err);
+    }
 
     // Reset Form
     setNewTitle("");
     setNewDesc("");
-    setNewDate("2026-06-28");
+    setNewDate(todayStr);
     setNewTime("10:00 AM");
     setNewDuration("1h");
     setNewPriority("Medium");
@@ -282,16 +315,16 @@ function CalendarPage() {
   };
 
   // Date Checkers
-  const isToday = (dateStr: string) => dateStr === "2026-06-28";
+  const isToday = (dateStr: string) => dateStr === todayStr;
   const isWeekend = (dayOfWeek: number) => dayOfWeek === 5 || dayOfWeek === 6; // Sat, Sun
 
   // Overdue and Today's sidebar items
   const overdueTasks = useMemo(() => {
-    return events.filter((e) => e.date < "2026-06-28" && e.status !== "Done");
+    return events.filter((e) => e.date < todayStr && e.status !== "Done");
   }, [events]);
 
   const todayTasks = useMemo(() => {
-    return events.filter((e) => e.date === "2026-06-28");
+    return events.filter((e) => e.date === todayStr);
   }, [events]);
 
   return (
@@ -309,20 +342,20 @@ function CalendarPage() {
           <div className="flex items-center gap-4">
             <div>
               <h2 className="text-xl font-bold text-[#191b23]">Calendar</h2>
-              <p className="text-xs text-secondary mt-0.5">Sunday, June 28, 2026</p>
+              <p className="text-xs text-secondary mt-0.5">{currentDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
             </div>
             <div className="flex items-center gap-1 bg-[#f3f3fe] border border-outline-variant/30 rounded-lg p-0.5">
-              <button onClick={() => showToast("Previous date range...")} className="p-1.5 hover:bg-white rounded-md text-secondary hover:text-on-surface transition-all">
+              <button onClick={prevMonth} className="p-1.5 hover:bg-white rounded-md text-secondary hover:text-on-surface transition-all">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button onClick={() => showToast("Jump to today...")} className="px-3 py-1 bg-white shadow-sm border border-outline-variant/20 rounded-md text-xs font-semibold text-[#191b23]">
+              <button onClick={goToday} className="px-3 py-1 bg-white shadow-sm border border-outline-variant/20 rounded-md text-xs font-semibold text-[#191b23]">
                 Today
               </button>
-              <button onClick={() => showToast("Next date range...")} className="p-1.5 hover:bg-white rounded-md text-secondary hover:text-on-surface transition-all">
+              <button onClick={nextMonth} className="p-1.5 hover:bg-white rounded-md text-secondary hover:text-on-surface transition-all">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
-            <h3 className="text-lg font-semibold text-[#191b23] hidden lg:block">June 2026</h3>
+            <h3 className="text-lg font-semibold text-[#191b23] hidden lg:block">{currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h3>
           </div>
 
           <div className="flex items-center flex-wrap gap-2 w-full md:w-auto">
@@ -381,9 +414,14 @@ function CalendarPage() {
         </header>
 
         {/* Main Content Split Canvas */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Left Canvas: Calendar Grid / View */}
-          <div className="flex-1 p-6 overflow-y-auto">
+        {isLoading ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="w-8 h-8 border-4 border-[#004ac6] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="flex-1 flex overflow-hidden">
+            {/* Left Canvas: Calendar Grid / View */}
+            <div className="flex-1 p-6 overflow-y-auto">
             {filteredEvents.length === 0 ? (
               /* Empty State */
               <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-white border border-outline-variant/30 rounded-xl p-8 shadow-sm">
@@ -413,7 +451,7 @@ function CalendarPage() {
                     ))}
                   </div>
                   <div className="grid grid-cols-7 grid-rows-5 divide-x divide-y divide-outline-variant/20 min-h-[560px]">
-                    {JUNE_2026_DAYS.map((dayInfo, idx) => {
+                    {calendarDays.map((dayInfo: any, idx: number) => {
                     const dayEvents = eventsByDate[dayInfo.dateString] || [];
                     const isDayToday = isToday(dayInfo.dateString);
                     const isDayWeekend = isWeekend(dayInfo.dayOfWeek);
@@ -473,7 +511,7 @@ function CalendarPage() {
               <div className="bg-white border border-outline-variant/30 rounded-xl overflow-x-auto shadow-sm flex flex-col">
                 <div className="min-w-[800px]">
                   <div className="grid grid-cols-7 border-b border-outline-variant/30 text-center bg-[#f8f9fc] py-3 divide-x divide-outline-variant/20">
-                    {JUNE_2026_DAYS.slice(21, 28).map((dayInfo) => {
+                    {currentWeekDays.map((dayInfo: any) => {
                     const isDayToday = isToday(dayInfo.dateString);
                     return (
                       <div key={dayInfo.dateString} className="flex flex-col items-center gap-1 py-1">
@@ -492,7 +530,7 @@ function CalendarPage() {
                   })}
                 </div>
                 <div className="grid grid-cols-7 divide-x divide-outline-variant/20 min-h-[450px]">
-                  {JUNE_2026_DAYS.slice(21, 28).map((dayInfo) => {
+                  {currentWeekDays.map((dayInfo: any) => {
                     const dayEvents = eventsByDate[dayInfo.dateString] || [];
                     const isDayWeekend = isWeekend(dayInfo.dayOfWeek);
 
@@ -549,7 +587,7 @@ function CalendarPage() {
                   <p className="text-xs text-secondary">Today's Schedule</p>
                 </div>
                 <div className="space-y-3">
-                  {eventsByDate["2026-06-28"]?.map((event) => (
+                  {eventsByDate[todayStr]?.map((event) => (
                     <div
                       key={event.id}
                       onClick={() => setSelectedEvent(event)}
@@ -597,7 +635,7 @@ function CalendarPage() {
             ) : (
               /* Agenda View */
               <div className="space-y-6">
-                {JUNE_2026_DAYS.map((dayInfo) => {
+                {calendarDays.map((dayInfo: any) => {
                   const dayEvents = eventsByDate[dayInfo.dateString] || [];
                   if (dayEvents.length === 0) return null;
 
@@ -605,7 +643,7 @@ function CalendarPage() {
                     <div key={dayInfo.dateString} className="bg-white border border-outline-variant/30 rounded-xl p-6 shadow-sm space-y-4">
                       <div className="border-b border-outline-variant/20 pb-3 flex justify-between items-center">
                         <h4 className="text-sm font-bold text-[#191b23]">
-                          {WEEKDAYS[dayInfo.dayOfWeek]}, June {dayInfo.dayOfMonth}, 2026
+                          {WEEKDAYS[dayInfo.dayOfWeek]}, {currentDate.toLocaleDateString("en-US", { month: "long" })} {dayInfo.dayOfMonth}, {currentDate.getFullYear()}
                         </h4>
                         {isToday(dayInfo.dateString) && (
                           <span className="px-2.5 py-0.5 bg-[#004ac6] text-white text-[10px] font-bold rounded-full">
@@ -804,7 +842,7 @@ function CalendarPage() {
               <div className="border border-outline-variant/30 rounded-xl p-4 bg-slate-50/50">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-outline mb-3">Mini Calendar</h4>
                 <div className="text-xs font-bold text-[#191b23] flex justify-between items-center mb-2">
-                  <span>June 2026</span>
+                  <span>{currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
                   <div className="flex gap-1">
                     <ChevronLeft className="w-3 h-3 cursor-pointer text-secondary hover:text-on-surface" />
                     <ChevronRight className="w-3 h-3 cursor-pointer text-secondary hover:text-on-surface" />
@@ -915,7 +953,7 @@ function CalendarPage() {
             </aside>
           )}
         </div>
-      </div>
+        )}
 
       {/* Global Toast */}
       {toast && (
@@ -923,6 +961,13 @@ function CalendarPage() {
           {toast}
         </div>
       )}
+      
+      {isLoading && (
+        <div className="fixed inset-0 bg-white/80 z-[60] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004ac6]"></div>
+        </div>
+      )}
+    </div>
 
       {/* Add Event Modal */}
       {isAddModalOpen && (

@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { apiFetch } from "../lib/api";
 import { useAuthGuard } from "../hooks/useAuthGuard";
+import { usePersistentState } from "../hooks/usePersistentState";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -16,12 +17,22 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function Dashboard() {
+  const navigate = useNavigate();
   useAuthGuard();
   const [notes, setNotes] = useState("");
   // Start with null — same on SSR and client to avoid hydration mismatch
   const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [timelineFilter, setTimelineFilter] = useState<"All" | "Updates" | "Mentions">("All");
+  const [timelineItems, setTimelineItems] = useState<any[]>([]);
+  const [taskStats, setTaskStats] = useState({ total: 0, completed: 0, percentage: 0 });
+  const [dashboardStats, setDashboardStats] = useState([
+    { icon: "timer", label: "Focus Time", val: "0h", change: "-", color: "text-emerald-500" },
+    { icon: "done_all", label: "Tasks Completed", val: "0", change: "-", color: "text-emerald-500" },
+    { icon: "bolt", label: "Efficiency", val: "0%", change: "-", color: "text-error" },
+    { icon: "calendar_month", label: "Deep Work Streak", val: "0 Days", change: "-", color: "text-outline" },
+  ]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -49,43 +60,67 @@ function Dashboard() {
         console.error("Failed to fetch user:", err);
       }
     };
+
+    const fetchDashboardData = async () => {
+      try {
+        const [activityRes, tasksRes] = await Promise.all([
+          apiFetch("/recent-actions").catch(() => null),
+          apiFetch("/tasks").catch(() => null)
+        ]);
+
+        if (activityRes) {
+          const activityData = await activityRes.json();
+          if (activityData.success && Array.isArray(activityData.data)) {
+            setTimelineItems(activityData.data.map((act: any, idx: number) => ({
+              id: act._id || idx.toString(),
+              type: act.action.toLowerCase().includes("upload") ? "upload" : 
+                    act.action.toLowerCase().includes("comment") ? "comment" : "complete",
+              icon: act.action.toLowerCase().includes("upload") ? "cloud_upload" : 
+                    act.action.toLowerCase().includes("comment") ? "forum" : "check_circle",
+              user: act.performedBy?.name || "User",
+              action: act.action,
+              target: act.task,
+              time: new Date(act.timestamp).toLocaleDateString(),
+              color: act.action.toLowerCase().includes("complete") 
+                ? "text-emerald-600 bg-emerald-500/10" 
+                : "text-primary bg-[#004ac6]/10",
+              completed: act.action.toLowerCase().includes("complete")
+            })));
+          }
+        }
+
+        if (tasksRes) {
+          const tasksData = await tasksRes.json();
+          if (tasksData.success && Array.isArray(tasksData.data?.tasks)) {
+            const tasks = tasksData.data.tasks;
+            const total = tasks.length || 1;
+            const completed = tasks.filter((t: any) => t.status === "Completed").length;
+            const eff = Math.round((completed / total) * 100) || 0;
+            setTaskStats({
+              total: tasks.length,
+              completed,
+              percentage: eff
+            });
+            setDashboardStats([
+              { icon: "timer", label: "Focus Time", val: (completed * 1.5) + "h", change: "Stable", color: "text-emerald-500" },
+              { icon: "done_all", label: "Tasks Completed", val: completed.toString(), change: "Stable", color: "text-emerald-500" },
+              { icon: "bolt", label: "Efficiency", val: eff + "%", change: "Stable", color: "text-error" },
+              { icon: "calendar_month", label: "Deep Work Streak", val: Math.min(completed, 5) + " Days", change: "Stable", color: "text-outline" },
+            ]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchUser();
+    fetchDashboardData();
   }, []);
 
-  const timelineItems = [
-    {
-      id: 1,
-      type: "upload",
-      icon: "cloud_upload",
-      user: "Jordan Miller",
-      action: "uploaded",
-      target: "v2.4_Assets_Package.zip",
-      time: "12m ago",
-      project: "Project Apollo Phase II",
-      color: "text-primary bg-[#004ac6]/10",
-    },
-    {
-      id: 2,
-      type: "comment",
-      icon: "forum",
-      user: "Sarah Chen",
-      action: "mentioned you in a comment",
-      time: "2h ago",
-      detail: '"@alex_thorne The grid alignment looks off in the mobile view for the dashboard hero. Can we take a look?"',
-      color: "text-tertiary bg-tertiary-container/10",
-    },
-    {
-      id: 3,
-      type: "complete",
-      icon: "check_circle",
-      user: "Alex Thorne",
-      action: "completed task",
-      target: "Update typography tokens",
-      time: "4h ago",
-      color: "text-emerald-600 bg-emerald-500/10",
-      completed: true,
-    },
-  ];
+
 
   return (
     <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
@@ -99,7 +134,13 @@ function Dashboard() {
 
         {/* Dashboard Body */}
         <main className="p-4 md:p-8 max-w-[1400px] mx-auto w-full space-y-6 md:space-y-8 flex-1 overflow-y-auto">
-          {/* Page Header */}
+          {isLoading ? (
+            <div className="flex justify-center items-center h-full min-h-[50vh]">
+              <div className="w-8 h-8 border-4 border-[#004ac6] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <>
+              {/* Page Header */}
           <section className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-6">
             <div>
               <h2 className="text-2xl md:text-4xl font-bold text-on-surface leading-none tracking-tight">
@@ -116,12 +157,12 @@ function Dashboard() {
                   <circle className="stroke-[#004ac6]" cx="18" cy="18" fill="none" r="16" strokeDasharray="100" strokeDashoffset="16" strokeLinecap="round" strokeWidth="3"></circle>
                 </svg>
                 <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[#004ac6]">
-                  84%
+                  {taskStats.percentage}%
                 </span>
               </div>
               <div>
                 <p className="text-sm font-semibold text-on-surface">Daily Goal Progress</p>
-                <p className="text-sm text-secondary">5 of 6 tasks completed</p>
+                <p className="text-sm text-secondary">{taskStats.completed} of {taskStats.total || 6} tasks completed</p>
               </div>
             </div>
           </section>
@@ -152,11 +193,11 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <button onClick={() => showToast("Continuing active session...")} className="px-5 py-2 bg-[#dbe4ff] hover:bg-[#c7d7ff] text-[#002266] font-bold text-xs rounded-lg flex items-center gap-1.5 transition-all shadow-sm">
+                  <button onClick={() => navigate({ to: "/kanban" })} className="px-5 py-2 bg-[#dbe4ff] hover:bg-[#c7d7ff] text-[#002266] font-bold text-xs rounded-lg flex items-center gap-1.5 transition-all shadow-sm">
                     <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
                     Continue
                   </button>
-                  <button onClick={() => showToast("Loading full project details...")} className="px-4 py-2 border border-white/20 hover:border-white/40 hover:bg-white/5 text-white font-semibold text-xs rounded-lg transition-all">
+                  <button onClick={() => navigate({ to: "/workspace" })} className="px-4 py-2 border border-white/20 hover:border-white/40 hover:bg-white/5 text-white font-semibold text-xs rounded-lg transition-all">
                     View Details
                   </button>
                 </div>
@@ -227,9 +268,9 @@ function Dashboard() {
               <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="text-sm font-semibold text-on-surface">Quick Notes</h4>
-                  <span onClick={() => showToast("Opening rich text editor...")} className="material-symbols-outlined text-[18px] text-outline cursor-pointer hover:text-[#004ac6] transition-colors">
+                  <button disabled title="Planned for a future release" className="material-symbols-outlined text-[18px] text-outline cursor-not-allowed opacity-50 focus:outline-none">
                     edit_note
-                  </span>
+                  </button>
                 </div>
                 <textarea
                   className="w-full bg-[#f3f3fe] border-none rounded-lg text-sm text-on-surface-variant p-3 resize-none focus:ring-1 focus:ring-[#004ac6] h-24 placeholder:text-outline/50"
@@ -315,7 +356,7 @@ function Dashboard() {
                   <span className="font-bold text-[#004ac6]">9:30 AM</span> and{" "}
                   <span className="font-bold text-[#004ac6]">11:15 AM</span>.
                 </p>
-                <button onClick={() => showToast("Compiling weekly report...")} className="mt-4 text-sm font-bold text-[#004ac6] hover:underline relative z-10 transition-colors">
+                <button disabled title="Planned for a future release" className="mt-4 text-sm font-bold text-[#004ac6] opacity-50 cursor-not-allowed relative z-10 transition-colors">
                   View Weekly Report
                 </button>
               </div>
@@ -340,12 +381,7 @@ function Dashboard() {
 
           {/* Footer: Minimal Stat Cards */}
           <footer className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 pt-4 md:pt-6 border-t border-outline-variant">
-            {[
-              { icon: "timer", label: "Focus Time", val: "6h 42m", change: "+12%", color: "text-emerald-500" },
-              { icon: "done_all", label: "Tasks Completed", val: "32", change: "+5%", color: "text-emerald-500" },
-              { icon: "bolt", label: "Efficiency", val: "94.2%", change: "-2%", color: "text-error" },
-              { icon: "calendar_month", label: "Deep Work Streak", val: "14 Days", change: "Stable", color: "text-outline" },
-            ].map((stat, idx) => (
+            {dashboardStats.map((stat, idx) => (
               <div
                 key={idx}
                 className="bg-surface-container-lowest border border-outline-variant p-4 rounded-xl hover:shadow-sm transition-shadow"
@@ -361,6 +397,8 @@ function Dashboard() {
               </div>
             ))}
           </footer>
+          </>
+          )}
         </main>
       </div>
 

@@ -14,6 +14,19 @@ process.on("uncaughtException", (err) => {
 // Load environment variables with override enabled
 dotenv.config({ override: true });
 
+// Environment Variable Verification (Phase 2)
+const requiredEnvVars = [
+  "NODE_ENV", "PORT", "MONGODB_URI", "JWT_SECRET", 
+  "JWT_EXPIRES_IN", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", 
+  "FRONTEND_URL", "CORS_ORIGIN"
+];
+
+const missingVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+if (missingVars.length > 0) {
+  logger.error(`❌ FATAL ERROR: Missing required environment variables: ${missingVars.join(", ")}`);
+  process.exit(1);
+}
+
 // Connect to MongoDB
 connectDB();
 

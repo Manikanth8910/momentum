@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useAuthGuard } from "../hooks/useAuthGuard";
+import { usePersistentState } from "../hooks/usePersistentState";
+import { apiFetch } from "../lib/api";
 import Sidebar from "../components/Sidebar";
 import {
   Sparkles,
@@ -90,8 +92,9 @@ interface Member {
 }
 
 function WorkspacePage() {
+  const navigate = useNavigate();
   useAuthGuard();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchFocused, setSearchFocused] = useState(false);
   const [wsName, setWsName] = useState("Engineering");
   const [wsDesc, setWsDesc] = useState("Core development hub for Momentum platform engineering.");
@@ -123,31 +126,89 @@ function WorkspacePage() {
   const [fabExpanded, setFabExpanded] = useState(false);
 
   // States for interactive data
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: "1", title: "Refactor Authentication Middleware", priority: "High", date: "Today", status: "inprogress", timeEst: "1.5h", comments: 2, attachments: 1, completed: false },
-    { id: "2", title: "Update Typography Tokens in CSS", priority: "Low", date: "Today", status: "todo", timeEst: "45m", comments: 0, attachments: 0, completed: false },
-    { id: "3", title: "Database Index Optimization", priority: "Medium", date: "Overdue", status: "overdue", timeEst: "2h", comments: 4, attachments: 0, completed: false },
-    { id: "4", title: "Review Apollo Phase II Roadmap", priority: "Medium", date: "Tomorrow", status: "todo", timeEst: "1h", comments: 1, attachments: 3, completed: false },
-    { id: "5", title: "Deploy Release v2.4", priority: "High", date: "Jun 30", status: "todo", timeEst: "3h", comments: 5, attachments: 1, completed: false },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const [projects, setProjects] = useState<Project[]>([
-    { id: "p1", name: "Design System v2", description: "Standardizing token structures for cross-platform compatibility.", progress: 84, tasksCount: 12, dueDate: "Jun 30", priority: "High", isPinned: true, isFavorite: true },
-    { id: "p2", name: "Apollo Phase II", description: "Rebuilding the core sync engine with WebSockets.", progress: 45, tasksCount: 28, dueDate: "Jul 15", priority: "Medium", isPinned: false, isFavorite: true },
-    { id: "p3", name: "Mobile App Redesign", description: "Native iOS and Android client overhaul.", progress: 10, tasksCount: 45, dueDate: "Aug 01", priority: "Low", isPinned: false, isFavorite: false },
-  ]);
+  useEffect(() => {
+    apiFetch("/tasks")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data?.tasks)) {
+          // Map backend tasks to frontend workspace task format
+          setTasks(data.data.tasks.map((t: any) => ({
+            id: t._id,
+            title: t.title,
+            priority: t.priority,
+            date: t.dueDate ? new Date(t.dueDate).toLocaleDateString() : "No Date",
+            status: t.status === "Completed" ? "done" : t.status === "In Progress" ? "inprogress" : "todo",
+            timeEst: t.estimatedTime ? `${t.estimatedTime}h` : "1h",
+            comments: 0,
+            attachments: 0,
+            completed: t.status === "Completed",
+          })));
+        }
+      })
+      .catch((err) => console.error("Failed to fetch tasks:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const [notes, setNotes] = useState<Note[]>([
-    { id: "n1", title: "Sprint Planning Notes", preview: "Focus on closing security issues and stabilizing token migration...", tag: "Meeting", lastEdited: "2h ago", color: "bg-amber-50", isFavorite: true },
-    { id: "n2", title: "WebSocket Sync Architecture", preview: "Drafting the payload schema and connection retry backoff rates...", tag: "Research", lastEdited: "1d ago", color: "bg-blue-50", isFavorite: false },
-    { id: "n3", title: "UI Improvements Backlog", preview: "1. Sidebar hover lag\n2. Kanban drag-and-drop feedback states...", tag: "Ideas", lastEdited: "3d ago", color: "bg-purple-50", isFavorite: true },
-  ]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
 
-  const members: Member[] = [
-    { id: "m1", name: "Sarah Chen", role: "Senior Designer", status: "In a meeting", currentTask: "Reviewing sidebar", online: true, avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuAXT1MoUdcTfsYDeXy265rU-2QQjJkvhen1YyHpGp6q2zir9g6qmb3Pv6LL9eXZ_cIttwzkTohjKbDBsA4Jitg0xTzHB0Po8CCpsSeFOa-vgjQ0J4XQJYj-bkT4mbNIszWJpQZ9gesmUpi7ZmayZXwVE343KKkd2DunZ9QA8kxArAnm4AarDp9gYfXr9fgts4eR5m4Fz0e0nHwkrvZT7y1SbaUSVA-f_zNwCAyRfrQi2UlpgRSkKVJXpeXLClHAsckSgi62XQh6bN4" },
-    { id: "m2", name: "Jordan Miller", role: "DevOps Lead", status: "Coding", currentTask: "CI/CD Pipeline debug", online: true, avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBnhi-L2-TSDa2EyoRflOlTcb56AUBC2seUo8ApkU_k7UAO0tFkzx-JlKAB0ibIe-VPjbh7ZbKFIygyYh2h9TKuwyGBw7ZuGHuJ1vMaI0wS0ua31iJ6Cdt7WtGi5lQtx9-1D9xnlsSVfR6U8xUqtRZAW_CkVu1jvWyeqad2XjkcR4Lp8Hh9atwrBLeFBuA87qOp5slzotMvT1QCiH2WWts8YMtNui27RV0GA0Us5qRhqzvZ4XOqVp4YdS3fVMN-N9Gd-td7fh6yZ7Y" },
-    { id: "m3", name: "Alex Thorne", role: "Product Lead", status: "Available", currentTask: "Refining docs", online: true, avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuDVVmbgq8EX6537TOKKZ0MaPEuHCHbas8NR-oAZDZAypnIanovLJ3e-outkq6g9lCFnsJwAFG_AnJ_fn3yFR4gswD_Dx1Nq3y7eLtMi2E23mUrPpR6qmdyTULKrdDg7RX4RI7TwkHWeJyIrRRyym2xGDcV7Iy54m1qSe2FAg8yAMr0Qb6P4d7htgQ6Ck3RK5CX2YcXz3xF5pMachhX0jo8_ahMluq2Ju46dY3aX2bf7_Vcb9BTofp2gJTGUdqJnRnfPhNmK55tEKu0" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [projRes, notesRes, memRes] = await Promise.all([
+          apiFetch("/projects").catch(() => null),
+          apiFetch("/notes").catch(() => null),
+          apiFetch("/workspace/members").catch(() => null)
+        ]);
+        
+        if (projRes) {
+          const projData = await projRes.json();
+          if (projData.success) setProjects(projData.data);
+        }
+        if (notesRes) {
+          const notesData = await notesRes.json();
+          if (notesData.success) setNotes(notesData.data);
+        }
+        if (memRes) {
+          const memData = await memRes.json();
+          if (memData.success) setMembers(memData.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch workspace data:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleInviteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail) return;
+    try {
+      const res = await apiFetch("/workspace/invite", {
+        method: "POST",
+        body: JSON.stringify({ email: inviteEmail, role: "Member" })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast("Invitation sent!");
+        const memRes = await apiFetch("/workspace/members");
+        const memData = await memRes.json();
+        if (memData.success) setMembers(memData.data);
+      } else {
+        showToast("Failed to invite: " + data.message);
+      }
+    } catch (err) {
+      showToast("Error inviting member");
+    }
+    setIsInviteModalOpen(false);
+    setInviteEmail("");
+  };
 
   // Keyboard shortcut listener for Command Palette (Cmd/Ctrl + K)
   useEffect(() => {
@@ -227,6 +288,36 @@ function WorkspacePage() {
     );
   }
 
+  const handleCreateProject = () => {
+    const newProject: Project = {
+      id: `p${Date.now()}`,
+      name: "New Project",
+      description: "Newly created project. Add details here.",
+      progress: 0,
+      tasksCount: 0,
+      dueDate: "TBD",
+      priority: "Medium",
+      isPinned: false,
+      isFavorite: false,
+    };
+    setProjects([newProject, ...projects]);
+    showToast("New project created!");
+  };
+
+  const handleCreateNote = () => {
+    const newNote: Note = {
+      id: `n${Date.now()}`,
+      title: "New Note",
+      preview: "Start typing your note here...",
+      tag: "Draft",
+      lastEdited: "Just now",
+      color: "bg-slate-50",
+      isFavorite: false,
+    };
+    setNotes([newNote, ...notes]);
+    showToast("New note created!");
+  };
+
   return (
     <div className="flex min-h-screen bg-[#faf8ff] text-[#191b23] font-body-md selection:bg-[#004ac6]/10 selection:text-[#004ac6]">
       {/* Sidebar */}
@@ -303,16 +394,16 @@ function WorkspacePage() {
                   ))}
                 </div>
                 <button
-                  onClick={() => showToast("Invited member link copied!")}
+                  onClick={() => setIsInviteModalOpen(true)}
                   className="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 rounded-lg text-xs font-semibold hover:bg-[#f3f3fe] transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Invite
                 </button>
-                <button onClick={() => showToast("Opening share options...")} className="p-2 border border-outline-variant/30 rounded-lg text-secondary hover:text-[#004ac6] hover:bg-[#f3f3fe] transition-all">
+                <button onClick={() => { navigator.clipboard.writeText(window.location.href); showToast("Workspace link copied to clipboard!"); }} className="p-2 border border-outline-variant/30 rounded-lg text-secondary hover:text-[#004ac6] hover:bg-[#f3f3fe] transition-all">
                   <Share2 className="w-3.5 h-3.5" />
                 </button>
-                <button onClick={() => showToast("Opening workspace settings...")} className="p-2 border border-outline-variant/30 rounded-lg text-secondary hover:text-[#004ac6] hover:bg-[#f3f3fe] transition-all">
+                <button onClick={() => navigate({ to: "/settings" })} className="p-2 border border-outline-variant/30 rounded-lg text-secondary hover:text-[#004ac6] hover:bg-[#f3f3fe] transition-all">
                   <Settings className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -344,7 +435,7 @@ function WorkspacePage() {
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => showToast("Opening active session...")}
+                    onClick={() => navigate({ to: "/kanban" })}
                     className="flex items-center gap-1 px-4 py-2 bg-[#004ac6] hover:bg-[#004ac6]/90 text-white rounded-lg text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
                   >
                     <Play className="w-3.5 h-3.5 fill-white" />
@@ -370,8 +461,8 @@ function WorkspacePage() {
             <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 { label: "Create Task", icon: CheckSquare, action: () => setIsAddModalOpen(true) },
-                { label: "Create Project", icon: FolderPlus, action: () => showToast("Opening Create Project...") },
-                { label: "Create Note", icon: StickyNote, action: () => showToast("Opening Create Note...") },
+                { label: "Create Project", icon: FolderPlus, action: handleCreateProject },
+                { label: "Create Note", icon: StickyNote, action: handleCreateNote },
                 { label: "Focus Session", icon: Flame, action: () => setPomoActive(true) },
               ].map((act, i) => (
                 <button
@@ -854,6 +945,32 @@ function WorkspacePage() {
             <div className="bg-[#f8f9fc] border-t border-outline-variant/20 p-3 text-[10px] text-secondary flex justify-between">
               <span>Use ↑↓ to navigate, Enter to select</span>
               <span>Cmd + K to toggle</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Invite Modal */}
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-xl border border-outline-variant/30 flex flex-col">
+            <div className="flex justify-between items-center p-4 md:p-6 border-b border-outline-variant/20">
+              <h2 className="text-lg font-bold text-on-surface">Invite Team Member</h2>
+              <button onClick={() => setIsInviteModalOpen(false)} className="text-outline hover:text-on-surface">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 md:p-6 bg-[#faf8ff] flex-1">
+              <form id="invite-form" onSubmit={handleInviteSubmit} className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email Address</label>
+                  <input type="email" required placeholder="colleague@company.com" className="w-full border border-outline-variant/30 rounded-lg p-2.5 text-sm focus:outline-none focus:border-[#004ac6] bg-white shadow-sm" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} />
+                </div>
+              </form>
+            </div>
+            <div className="p-4 md:p-6 border-t border-outline-variant/20 flex justify-end gap-3 bg-white">
+              <button onClick={() => setIsInviteModalOpen(false)} className="px-4 py-2 border border-outline-variant/30 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">Cancel</button>
+              <button type="submit" form="invite-form" className="px-4 py-2 bg-[#004ac6] hover:bg-[#004ac6]/90 text-white rounded-lg text-sm font-bold shadow-sm transition-all">Send Invite</button>
             </div>
           </div>
         </div>

@@ -104,7 +104,7 @@ export default function Header() {
             searchFocused ? "ring-2 ring-[#004ac6]/20" : ""
           }`}
         >
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">
+          <span className="hidden sm:block material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">
             search
           </span>
           <input
@@ -128,13 +128,15 @@ export default function Header() {
 
       {/* User Actions */}
       <div className="flex items-center gap-2 lg:gap-4 shrink-0">
-        <button
-          onClick={() => showToast("Thank you for your feedback! Our engineering team will review it.")}
-          className="hidden md:block text-xs font-semibold text-secondary hover:text-[#004ac6] transition-colors"
-        >
-          Feedback
-        </button>
-        <div className="hidden md:block h-4 w-px bg-outline-variant"></div>
+        <div className="hidden lg:block ml-4 border-l border-outline-variant/30 pl-4">
+          <button
+            onClick={() => window.location.href = "mailto:support@momentum.app"}
+            className="flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant/30 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors text-secondary"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            Give Feedback
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           {/* Notifications */}
           <div className="relative">
@@ -189,6 +191,18 @@ export default function Header() {
             className="p-2 text-on-surface-variant hover:bg-[#f3f3fe] rounded-full transition-colors"
           >
             <span className="material-symbols-outlined">add_circle</span>
+          </button>
+        </div>
+
+        <div className="md:hidden">
+          <button
+            disabled
+            className="p-2 bg-[#f3f3fe] text-[#004ac6] rounded-xl hover:bg-[#e6e8fc] transition-colors relative cursor-not-allowed opacity-50 group"
+          >
+            <Search className="w-4 h-4" />
+            <div className="absolute top-10 right-0 w-32 bg-[#191b23] text-white text-[10px] py-1 px-2 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap shadow-xl z-50 pointer-events-none">
+              Planned for a future release
+            </div>
           </button>
         </div>
 

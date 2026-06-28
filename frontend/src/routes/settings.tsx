@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { apiFetch } from "../lib/api";
 import { useAuthGuard } from "../hooks/useAuthGuard";
+import { usePersistentState } from "../hooks/usePersistentState";
 import {
   Settings as SettingsIcon,
   User,
@@ -273,6 +274,72 @@ function SettingsPage() {
     } catch (err) {
       showToast("Error saving profile");
       console.error(err);
+    }
+  };
+
+
+  const handleExportJSON = async () => {
+    try {
+      showToast("Preparing JSON export...");
+      const res = await apiFetch("/tasks");
+      const data = await res.json();
+      if (data.success && data.data && data.data.tasks) {
+        const jsonStr = JSON.stringify(data.data.tasks, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `momentum_tasks_export_${new Date().toISOString().split("T")[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("JSON export complete.");
+      } else {
+        showToast("Failed to fetch data for export.");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Error exporting JSON.");
+    }
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      showToast("Preparing CSV export...");
+      const res = await apiFetch("/tasks");
+      const data = await res.json();
+      if (data.success && data.data && data.data.tasks) {
+        const tasks = data.data.tasks;
+        if (tasks.length === 0) {
+          showToast("No tasks to export.");
+          return;
+        }
+        const headers = ["ID", "Title", "Status", "Priority", "Due Date"];
+        const rows = tasks.map((t: any) => [
+          t._id, 
+          `"${(t.title || "").replace(/"/g, '""')}"`, 
+          t.status, 
+          t.priority, 
+          t.dueDate
+        ]);
+        const csvContent = [headers.join(","), ...rows.map((r: any[]) => r.join(","))].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `momentum_tasks_export_${new Date().toISOString().split("T")[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("CSV export complete.");
+      } else {
+        showToast("Failed to fetch data for export.");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Error exporting CSV.");
     }
   };
 
@@ -1179,13 +1246,13 @@ function SettingsPage() {
                     </div>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => showToast("Exporting data as JSON...")}
+                        onClick={handleExportJSON}
                         className="px-4 py-2 border border-outline-variant/30 rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors text-[#191b23] flex items-center gap-1.5"
                       >
                         <Download className="w-3.5 h-3.5" /> Export JSON
                       </button>
                       <button
-                        onClick={() => showToast("Exporting data as CSV...")}
+                        onClick={handleExportCSV}
                         className="px-4 py-2 border border-outline-variant/30 rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors text-[#191b23] flex items-center gap-1.5"
                       >
                         <Download className="w-3.5 h-3.5" /> Export CSV

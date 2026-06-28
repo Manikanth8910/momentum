@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
+import rateLimit from "express-rate-limit";
 import router from "./routes/index.js";
 import { logger } from "./config/logger.js";
 import { globalErrorHandler } from "./middleware/error.middleware.js";
@@ -15,7 +16,7 @@ app.use(helmet());
 
 // CORS Configuration
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:3222",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -39,6 +40,14 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // Gzip Compression
 app.use(compression());
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per window
+  message: "Too many requests from this IP, please try again later."
+});
+app.use("/api", limiter);
 
 // Mount API Routes
 app.use(router);

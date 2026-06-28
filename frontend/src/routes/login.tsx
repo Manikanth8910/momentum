@@ -109,11 +109,11 @@ function Login() {
         }, 500);
       } else {
         setIsLoading(false);
-        alert("Google Auth failed: " + data.message);
+        setLoginError("Google Auth failed: " + data.message);
       }
     } catch (err: any) {
       setIsLoading(false);
-      alert("Error connecting to backend: " + err.message);
+      setLoginError("Error connecting to backend: " + err.message);
     }
   };
 

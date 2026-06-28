@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { apiFetch } from "../lib/api";
+import { usePersistentState } from "../hooks/usePersistentState";
 import { useAuthGuard } from "../hooks/useAuthGuard";
 import {
   ResponsiveContainer,
@@ -40,13 +41,10 @@ function Analytics() {
   const [timeRange, setTimeRange] = useState<"7days" | "30days">("7days");
   const [heatmapCells, setHeatmapCells] = useState<string[][]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const [priorityData, setPriorityData] = useState([
-    { name: "High Priority", value: 45, color: "#004ac6" },
-    { name: "Medium Priority", value: 30, color: "#585f6c" },
-    { name: "Low Priority", value: 25, color: "#c3c6d7" },
-  ]);
+  const [priorityData, setPriorityData] = useState<any[]>([]);
   const [taskStats, setTaskStats] = useState({ total: 0, completed: 0, velocity: "0%" });
-  const [focusData] = useState(defaultFocusData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [focusData] = usePersistentState("focusData", defaultFocusData);
 
   // Fetch real task data for analytics
   useEffect(() => {
@@ -66,7 +64,8 @@ function Analytics() {
         const velocity = total > 0 ? `${Math.round((completed / total) * 100)}%` : "0%";
         setTaskStats({ total, completed, velocity });
       }
-    }).catch(() => {});
+    }).catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
 
   const showToast = (msg: string) => {
@@ -86,10 +85,10 @@ function Analytics() {
 
     const grid = Array(24)
       .fill(0)
-      .map(() =>
+      .map((_, i) =>
         Array(7)
           .fill(0)
-          .map(() => colors[Math.floor(Math.random() * colors.length)])
+          .map((_, j) => colors[(i * 13 + j * 7 + 3) % colors.length])
       );
 
     setHeatmapCells(grid);
@@ -102,8 +101,14 @@ function Analytics() {
 
       {/* Main Content Canvas */}
       <main className="flex-1 lg:ml-64 min-h-screen p-4 md:p-8 max-w-[1400px] overflow-y-auto">
-        {/* Top Bar */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full min-h-[50vh]">
+            <div className="w-8 h-8 border-4 border-[#004ac6] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <>
+            {/* Top Bar */}
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight">Productivity Analytics</h2>
             <p className="text-sm text-on-surface-variant">Real-time performance metrics and focus trends.</p>
@@ -113,7 +118,7 @@ function Analytics() {
               <button onClick={() => setTimeRange("7days")} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${timeRange === "7days" ? "bg-white shadow-sm text-[#004ac6]" : "text-on-surface-variant hover:text-on-surface"}`}>7 Days</button>
               <button onClick={() => setTimeRange("30days")} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${timeRange === "30days" ? "bg-white shadow-sm text-[#004ac6]" : "text-on-surface-variant hover:text-on-surface"}`}>30 Days</button>
             </div>
-            <button onClick={() => showToast("Exporting report as PDF...")} className="flex items-center gap-1 px-3 py-2 bg-white border border-outline-variant rounded-lg hover:bg-[#f3f3fe] transition-colors text-sm font-semibold">
+            <button disabled title="Planned for a future release" className="flex items-center gap-1 px-3 py-2 bg-white border border-outline-variant rounded-lg transition-colors text-sm font-semibold opacity-50 cursor-not-allowed">
               <span className="material-symbols-outlined text-[18px]">download</span>
               <span className="hidden sm:inline">Export Report</span>
             </button>
@@ -394,6 +399,8 @@ function Analytics() {
             </div>
           </div>
         </section>
+        </>
+        )}
       </main>
 
       {/* Global Toast */}
