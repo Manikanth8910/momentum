@@ -85,9 +85,13 @@ export const loginWithGoogle = async (idToken) => {
   // Find or create user
   let user = await User.findOne({ email });
   if (!user) {
+    const crypto = await import("crypto");
+    const randomPassword = crypto.randomBytes(32).toString("hex");
+
     user = await User.create({
       name,
       email,
+      password: randomPassword,
       avatar: picture,
       role: "member",
     });
