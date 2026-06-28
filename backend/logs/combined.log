@@ -108,3 +108,5 @@
 {"level":"info","message":"💾 MongoDB Connected: ac-mpmqwel-shard-00-01.vaqvnsc.mongodb.net","timestamp":"2026-06-28 21:46:15:4615"}
 {"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 22:29:06:296"}
 {"level":"info","message":"💾 MongoDB Connected: ac-mpmqwel-shard-00-02.vaqvnsc.mongodb.net","timestamp":"2026-06-28 22:29:07:297"}
+{"level":"error","message":"404 - Cannot find /api/v1/activity on this server - /api/v1/activity - GET - ::1","timestamp":"2026-06-28 22:39:47:3947"}
+{"level":"error","message":"404 - Cannot find /favicon.ico on this server - /favicon.ico - GET - ::1","timestamp":"2026-06-28 22:39:47:3947"}

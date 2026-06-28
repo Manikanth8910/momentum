@@ -29,3 +29,5 @@
 {"level":"error","message":"404 - Cannot find /favicon.ico on this server - /favicon.ico - GET - ::1","timestamp":"2026-06-28 17:26:26:2626"}
 {"level":"error","message":"401 - You are not logged in. Please log in to gain access. - /api/v1/activity - GET - ::1","timestamp":"2026-06-28 17:29:46:2946"}
 {"level":"error","message":"401 - You are not logged in. Please log in to gain access. - /api/v1/activity - GET - ::1","timestamp":"2026-06-28 17:29:47:2947"}
+{"level":"error","message":"404 - Cannot find /api/v1/activity on this server - /api/v1/activity - GET - ::1","timestamp":"2026-06-28 22:39:47:3947"}
+{"level":"error","message":"404 - Cannot find /favicon.ico on this server - /favicon.ico - GET - ::1","timestamp":"2026-06-28 22:39:47:3947"}

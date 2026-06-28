@@ -311,31 +311,31 @@ export default function WorkspacePage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#faf8ff] text-[#191b23] font-body-md selection:bg-[#004ac6]/10 selection:text-[#004ac6]">
+    <div className="flex min-h-screen bg-[#faf8ff] text-[#191b23] font-body-md selection:bg-[#004ac6]/10 selection:text-[#004ac6] w-full overflow-x-hidden">
       {/* Sidebar */}
       <Sidebar activePage="workspace" />
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen relative">
+      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen relative min-w-0 w-full overflow-x-hidden">
         {/* Top Navbar */}
-        <header className="flex justify-between items-center w-full px-8 h-16 sticky top-0 z-40 bg-white border-b border-outline-variant/30">
+        <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 sticky top-0 z-40 bg-white border-b border-outline-variant/30">
           {/* Breadcrumbs */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-secondary">
+          <div className="flex items-center gap-1 md:gap-2 text-xs font-semibold text-secondary truncate">
             <span>Momentum</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />
             <span>Workspaces</span>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-[#191b23]">{wsName}</span>
           </div>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4 shrink-0">
             <button
               onClick={() => setIsCommandPaletteOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-[#f3f3fe] border border-outline-variant/30 rounded-lg text-xs text-outline hover:text-on-surface transition-colors w-44"
+              className="flex items-center justify-center md:justify-start gap-2 p-2 md:px-3 md:py-1.5 bg-[#f3f3fe] border border-outline-variant/30 rounded-lg text-xs text-outline hover:text-on-surface transition-colors w-8 md:w-44 shrink-0"
             >
-              <Search className="w-3.5 h-3.5" />
-              <span>Search (Cmd + K)</span>
+              <Search className="w-4 h-4 md:w-3.5 md:h-3.5" />
+              <span className="hidden md:inline">Search (Cmd + K)</span>
             </button>
             <button className="p-2 text-outline hover:bg-[#f3f3fe] rounded-full transition-colors relative">
               <Bell className="w-4 h-4" />
@@ -352,11 +352,11 @@ export default function WorkspacePage() {
         </header>
 
         {/* Outer Split Canvas */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0 w-full">
           {/* Left Side: Main Feed */}
-          <main className="flex-1 p-4 lg:p-8 max-w-[1000px] space-y-8 lg:overflow-y-auto pb-24">
+          <main className="flex-1 p-4 lg:p-8 max-w-[1000px] space-y-8 lg:overflow-y-auto pb-24 min-w-0 w-full">
             {/* Workspace Header Info */}
-            <section className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white border border-outline-variant/30 rounded-xl p-6 shadow-sm gap-4">
+            <section className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white border border-outline-variant/30 rounded-xl p-4 md:p-6 shadow-sm gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#004ac6] text-white rounded-lg flex items-center justify-center">
                   <Layers className="w-5 h-5" />
