@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Momentum | Professional Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#2e3039",
+                    "secondary-fixed-dim": "#c0c7d6",
+                    "on-tertiary-container": "#ffede6",
+                    "on-secondary-fixed": "#151c27",
+                    "on-surface": "#191b23",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#0053db",
+                    "surface-bright": "#faf8ff",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-primary-fixed": "#00174b",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#7d2d00",
+                    "surface": "#faf8ff",
+                    "primary-fixed": "#dbe1ff",
+                    "on-tertiary-fixed": "#360f00",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "surface-container-highest": "#e1e2ed",
+                    "on-error": "#ffffff",
+                    "outline": "#737686",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-dim": "#d9d9e5",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f0f0fb",
+                    "on-secondary-container": "#5e6572",
+                    "tertiary": "#943700",
+                    "on-primary-container": "#eeefff",
+                    "on-secondary-fixed-variant": "#404754",
+                    "tertiary-container": "#bc4800",
+                    "on-error-container": "#93000a",
+                    "background": "#faf8ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#dce2f3",
+                    "inverse-primary": "#b4c5ff",
+                    "surface-container-high": "#e7e7f3",
+                    "surface-variant": "#e1e2ed",
+                    "primary": "#004ac6",
+                    "outline-variant": "#c3c6d7",
+                    "tertiary-fixed-dim": "#ffb596",
+                    "on-background": "#191b23",
+                    "surface-container-low": "#f3f3fe",
+                    "surface-container": "#ededf9",
+                    "secondary": "#585f6c",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#434655",
+                    "secondary-container": "#dce2f3",
+                    "primary-container": "#2563eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "unit": "8px",
+                    "margin": "24px",
+                    "max-width": "1280px",
+                    "2xl": "48px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "xl": "32px",
+                    "gutter": "16px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["11px", {"lineHeight": "1", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "headline-lg": ["30px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "label-md": ["13px", {"lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf8ff;
+            color: #191b23;
+            margin: 0;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        /* Abstract Composition Styling */
+        .abstract-bg {
+            background-color: #004ac6; /* Primary Color */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .geometric-shape {
+            position: absolute;
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+        }
+
+        .shape-1 {
+            width: 80%;
+            height: 80%;
+            border: 1px solid white;
+            top: -10%;
+            left: -10%;
+            transform: rotate(15deg);
+        }
+
+        .shape-2 {
+            width: 60%;
+            height: 60%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            bottom: -5%;
+            right: -5%;
+            border-radius: 50%;
+        }
+
+        .shape-3 {
+            width: 40%;
+            height: 100%;
+            border-left: 1px solid white;
+            left: 20%;
+            top: 0;
+            transform: skewX(-20deg);
+        }
+
+        /* Micro-interactions */
+        .btn-hover-effect {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover-effect:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .btn-hover-effect:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .input-focus-ring:focus-within {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen overflow-y-auto md:overflow-hidden">
+<!-- Left Side: Abstract 2D Composition -->
+<div class="hidden md:flex w-1/2 abstract-bg items-center justify-center p-2xl">
+    <div class="geometric-shape shape-1" id="shape1"></div>
+    <div class="geometric-shape shape-2" id="shape2"></div>
+    <div class="geometric-shape shape-3" id="shape3"></div>
+    <div class="relative z-10 max-w-md">
+        <h2 class="text-white font-display text-display mb-lg leading-none">
+            Precision in Every Pixel.
+        </h2>
+        <div class="w-16 h-1 bg-white mb-lg"></div>
+        <p class="text-white/80 font-body-lg text-body-lg leading-relaxed">
+            Experience the next evolution of productivity software. Momentum is built for high-performance teams who value speed, clarity, and structural integrity.
+        </p>
+    </div>
+    <!-- Subtle branding overlay at the bottom -->
+    <div class="absolute bottom-xl left-xl flex items-center space-x-sm opacity-50">
+        <span class="text-white font-label-sm text-label-sm tracking-widest uppercase">Momentum Design System v2.4</span>
+    </div>
+</div>
+<!-- Right Side: Login Form -->
+<main class="w-full md:w-1/2 bg-surface-container-lowest flex items-center justify-center px-lg py-2xl min-h-screen md:min-h-0 overflow-y-auto">
+    <div class="w-full max-w-[400px]">
+        <!-- Logo Section -->
+        <div class="mb-xl">
+            <div class="flex items-center space-x-xs mb-md">
+                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center" aria-hidden="true">
+                    <span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">change_history</span>
+                </div>
+                <span class="font-headline-md text-headline-md font-bold text-primary">Momentum</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Welcome back</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Please enter your credentials to access your dashboard.</p>
+        </div>
+        <!-- Form -->
+        <form class="space-y-md" id="login-form" onsubmit="return false;">
+            <!-- Email Field -->
+            <div class="space-y-xs">
+                <label class="font-label-md text-label-md text-on-surface-variant" for="email">Email Address</label>
+                <div class="relative flex items-center input-focus-ring border border-outline-variant rounded-lg bg-white transition-all overflow-hidden">
+                    <span class="material-symbols-outlined absolute left-md text-outline text-[20px]" aria-hidden="true">mail</span>
+                    <input class="w-full pl-[48px] pr-md py-[12px] bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface outline-none" id="email" name="email" placeholder="name@company.com" required="" type="email"/>
+                </div>
+            </div>
+            <!-- Password Field -->
+            <div class="space-y-xs">
+                <div class="flex justify-between items-center">
+                    <label class="font-label-md text-label-md text-on-surface-variant" for="password">Password</label>
+                    <a class="font-label-sm text-label-sm text-primary hover:underline transition-all" href="#">Forgot password?</a>
+                </div>
+                <div class="relative flex items-center input-focus-ring border border-outline-variant rounded-lg bg-white transition-all overflow-hidden">
+                    <span class="material-symbols-outlined absolute left-md text-outline text-[20px]" aria-hidden="true">lock</span>
+                    <input class="w-full pl-[48px] pr-[48px] py-[12px] bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface outline-none" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+                    <button class="absolute right-md text-outline hover:text-on-surface transition-colors" onclick="togglePassword()" type="button" id="password-toggle-btn" aria-label="Show password" aria-controls="password">
+                        <span class="material-symbols-outlined text-[20px]" id="password-toggle-icon">visibility</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Remember Me -->
+            <div class="flex items-center space-x-sm pt-xs">
+                <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" id="remember" type="checkbox"/>
+                <label class="font-body-md text-body-md text-on-surface-variant select-none cursor-pointer" for="remember">Stay signed in for 30 days</label>
+            </div>
+            <!-- Action Button -->
+            <button class="w-full bg-primary text-on-primary font-label-md text-label-md py-md rounded-lg btn-hover-effect flex items-center justify-center space-x-xs mt-lg transition-all" type="submit" id="submit-btn">
+                <span>Continue</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+        </form>
+        <!-- Footer Section -->
+        <div class="mt-2xl pt-lg border-t border-outline-variant">
+            <p class="font-body-md text-body-md text-on-surface-variant text-center">
+                Don't have an account? 
+                <a class="text-primary font-bold hover:underline" href="#">Request Access</a>
+            </p>
+            <div class="mt-xl flex justify-center space-x-lg">
+                <a class="font-label-sm text-label-sm text-outline hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+                <a class="font-label-sm text-label-sm text-outline hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    // Micro-interaction: Password visibility toggle with accessibility support
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('password-toggle-icon');
+        const toggleBtn = document.getElementById('password-toggle-btn');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.textContent = 'visibility_off';
+            toggleBtn.setAttribute('aria-label', 'Hide password');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.textContent = 'visibility';
+            toggleBtn.setAttribute('aria-label', 'Show password');
+        }
+    }
+
+    // Fake loading state and redirect for the primary button
+    const form = document.getElementById('login-form');
+    form.addEventListener('submit', (e) => {
+        const btn = document.getElementById('submit-btn');
+        const originalContent = btn.innerHTML;
+        
+        btn.disabled = true;
+        btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+        
+        setTimeout(() => {
+            btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">check</span><span>Signed In</span>`;
+            setTimeout(() => {
+                window.location.href = '/dashboard.html';
+            }, 500);
+        }, 1500);
+    });
+
+    // Optimized atmospheric geometry movement on mouse track (subtle & throttled)
+    let ticked = false;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const shape1 = document.getElementById('shape1');
+    const shape2 = document.getElementById('shape2');
+    const shape3 = document.getElementById('shape3');
+
+    function updateParallax() {
+        if (window.innerWidth >= 768) { // Only run if left panel is visible
+            if (shape1) shape1.style.transform = `rotate(15deg) translate(${mouseX * 15}px, ${mouseY * 15}px)`;
+            if (shape2) shape2.style.transform = `translate(${mouseX * 30}px, ${mouseY * 30}px)`;
+            if (shape3) shape3.style.transform = `skewX(-20deg) translate(${mouseX * 45}px, ${mouseY * 45}px)`;
+        }
+        ticked = false;
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth) - 0.5;
+        mouseY = (e.clientY / window.innerHeight) - 0.5;
+
+        if (!ticked) {
+            window.requestAnimationFrame(updateParallax);
+            ticked = true;
+        }
+    });
+</script>
+</body>
+</html>

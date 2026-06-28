@@ -1,0 +1,235 @@
+openapi: 3.0.3
+info:
+  title: Momentum REST API
+  description: Production-ready API for the Momentum productivity platform.
+  version: 2.0.0
+servers:
+  - url: http://localhost:5050/api/v1
+    description: Local Development Server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: Alex Thorne
+                email:
+                  type: string
+                  format: email
+                  example: alex.thorne@momentum.com
+                password:
+                  type: string
+                  format: password
+                  example: Password123
+      responses:
+        "201":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "400":
+          description: Validation failure
+        "409":
+          description: Email already exists
+
+  /auth/login:
+    post:
+      summary: Authenticate user & login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: alex.thorne@momentum.com
+                password:
+                  type: string
+                  format: password
+                  example: Password123
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "401":
+          description: Invalid credentials
+
+  /tasks:
+    get:
+      summary: Query tasks
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Todo, In Progress, Completed]
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [High, Medium, Low]
+      responses:
+        "200":
+          description: List of tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      tasks:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Task'
+                      pagination:
+                        type: object
+
+  /tasks/dashboard:
+    get:
+      summary: Retrieve dashboard metrics
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Dashboard metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      totalTasks:
+                        type: integer
+                      completedTasks:
+                        type: integer
+                      pendingTasks:
+                        type: integer
+                      overdueTasks:
+                        type: integer
+                      completionRate:
+                        type: number
+                      recentTasks:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Task'
+                      upcomingTasks:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Task'
+                      priorityBreakdown:
+                        type: object
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+            accessToken:
+              type: string
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        estimatedHours:
+          type: number
+        createdBy:
+          type: string

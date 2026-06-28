@@ -1,0 +1,76 @@
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:25:01:251"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:25:31:2531"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:06:276"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:13:2713"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:18:2718"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:23:2723"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:32:2732"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:53:2753"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:27:58:2758"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:28:04:284"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:28:09:289"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:28:39:2839"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:48:50:4850"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:49:20:4920"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:54:25:5425"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 12:54:30:5430"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:55:00:550"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:01:23:123"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:01:23:123"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:02:58:258"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:02:58:258"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:03:03:33"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:03:03:33"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:03:10:310"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:03:10:310"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:03:15:315"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:03:15:315"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:03:21:321"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:03:21:321"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:06:05:65"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:06:05:65"}
+{"level":"error","message":"500 - error processing query: ns=momentum.tasks limit=30Tree: $and\n    $or\n        category regex /Authentication/i\n        labels regex /Authentication/i\n        TEXT : query=Authentication, language=english, caseSensitive=0, diacriticSensitive=0\n    createdBy $eq ObjectId('6a40cdbab979d6d1f181d5eb')\n    deletedAt $eq null\nSort: {}\nProj: {}\n planner returned error :: caused by :: No query solutions - /api/v1/search?q=Authentication - GET - ::1","timestamp":"2026-06-28 13:06:12:612"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:06:22:622"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:06:22:622"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:34:48:3448"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:36:20:3620"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:36:43:3643"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:36:43:3643"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:38:24:3824"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:38:47:3847"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:38:47:3847"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:38:59:3859"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:39:29:3929"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:39:29:3929"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:41:20:4120"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:41:20:4120"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 13:53:54:5354"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 13:53:54:5354"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 14:17:50:1750"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 14:17:50:1750"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:18:29:1829"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:19:24:1924"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/tasks - GET - ::1","timestamp":"2026-06-28 14:19:55:1955"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:19:55:1955"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/tasks - GET - ::1","timestamp":"2026-06-28 14:51:23:5123"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:51:23:5123"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:49:5249"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:49:5249"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:23:5323"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:23:5323"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:43:5343"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:43:5343"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 14:55:31:5531"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 14:55:31:5531"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 15:09:48:948"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/tasks - GET - ::1","timestamp":"2026-06-28 15:09:48:948"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 15:32:24:3224"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 15:32:24:3224"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 15:46:36:4636"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 15:46:36:4636"}
+{"level":"info","message":"🚀 Server running in development mode on port 5050","timestamp":"2026-06-28 15:46:46:4646"}
+{"level":"info","message":"💾 MongoDB Connected: localhost","timestamp":"2026-06-28 15:46:46:4646"}

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Momentum | Productivity Analytics</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2e3039",
+                        "secondary-fixed-dim": "#c0c7d6",
+                        "on-tertiary-container": "#ffede6",
+                        "on-secondary-fixed": "#151c27",
+                        "on-surface": "#191b23",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#0053db",
+                        "surface-bright": "#faf8ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface": "#faf8ff",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-container-highest": "#e1e2ed",
+                        "on-error": "#ffffff",
+                        "outline": "#737686",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-dim": "#d9d9e5",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f0f0fb",
+                        "on-secondary-container": "#5e6572",
+                        "tertiary": "#943700",
+                        "on-primary-container": "#eeefff",
+                        "on-secondary-fixed-variant": "#404754",
+                        "tertiary-container": "#bc4800",
+                        "on-error-container": "#93000a",
+                        "background": "#faf8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#dce2f3",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-container-high": "#e7e7f3",
+                        "surface-variant": "#e1e2ed",
+                        "primary": "#004ac6",
+                        "outline-variant": "#c3c6d7",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-background": "#191b23",
+                        "surface-container-low": "#f3f3fe",
+                        "surface-container": "#ededf9",
+                        "secondary": "#585f6c",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#434655",
+                        "secondary-container": "#dce2f3",
+                        "primary-container": "#2563eb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "unit": "8px",
+                        "margin": "24px",
+                        "max-width": "1280px",
+                        "2xl": "48px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["11px", {"lineHeight": "1", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "label-md": ["13px", {"lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .heatmap-cell { width: 10px; height: 10px; border-radius: 2px; }
+        .sparkline { height: 40px; stroke-width: 2; fill: transparent; stroke-linecap: round; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Integrated SideNavBar -->
+<aside class="flex flex-col w-64 h-screen fixed left-0 top-0 z-50 p-md bg-surface-container-low border-r border-outline-variant">
+<div class="flex items-center gap-sm mb-xl px-xs">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-black text-on-surface">Momentum</h1>
+<p class="text-label-sm font-label-sm text-secondary">Pro Plan</p>
+</div>
+</div>
+<button class="mb-xl w-full bg-primary text-on-primary py-sm px-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-xs hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Project
+        </button>
+<nav class="flex-1 space-y-unit">
+<!-- Active Tab: Insights -->
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all hover:translate-x-1 duration-200" href="/dashboard.html"><span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all hover:translate-x-1 duration-200" href="/kanban.html"><span class="material-symbols-outlined">checklist</span>
+<span class="text-label-md font-label-md">Tasks</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-label-md font-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary font-bold bg-primary-container/10 transition-all translate-x-1 duration-200" href="/analytics.html"><span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Insights</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">workspaces</span>
+<span class="text-label-md font-label-md">Workspace</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-xl border-t border-outline-variant space-y-unit">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="text-label-md font-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-container hover:bg-surface-container-highest transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-label-md font-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen p-lg max-w-[1400px]">
+<!-- Top Bar -->
+<header class="flex justify-between items-center mb-xl">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Productivity Analytics</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Real-time performance metrics and focus trends.</p>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex bg-surface-container p-[4px] rounded-lg border border-outline-variant">
+<button class="px-md py-xs text-label-sm font-label-sm bg-surface-container-lowest rounded-md shadow-sm">Last 7 Days</button>
+<button class="px-md py-xs text-label-sm font-label-sm text-on-surface-variant">Last 30 Days</button>
+</div>
+<button class="flex items-center gap-xs px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="text-label-md font-label-md">Export Report</span>
+</button>
+</div>
+</header>
+<!-- Summary Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-md mb-xl">
+<!-- Weekly Task Velocity Card -->
+<div class="col-span-1 md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">Weekly Task Velocity</p>
+<h3 class="text-display font-display leading-none">84.2%</h3>
+<p class="text-label-sm font-label-sm text-primary mt-unit flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +12% from last week
+                        </p>
+</div>
+<div class="w-48 h-16">
+<svg class="w-full h-full" viewbox="0 0 200 60">
+<path d="M0,50 Q20,20 40,40 T80,10 T120,45 T160,20 T200,30" fill="none" stroke="#004ac6" stroke-width="2.5"></path>
+<path d="M0,50 Q20,20 40,40 T80,10 T120,45 T160,20 T200,30 V60 H0 Z" fill="url(#grad1)" opacity="0.1"></path>
+<defs>
+<lineargradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#004ac6;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#004ac6;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">Avg. Focus Session</p>
+<div class="flex items-baseline gap-xs">
+<h3 class="text-headline-lg font-headline-lg">42</h3>
+<span class="text-body-md font-body-md text-on-surface-variant">min</span>
+</div>
+<div class="mt-md h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[70%]"></div>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-sm">Goal: 60 min session</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">Active Projects</p>
+<div class="flex items-baseline gap-xs">
+<h3 class="text-headline-lg font-headline-lg">12</h3>
+<span class="text-body-md font-body-md text-on-surface-variant">across 3 teams</span>
+</div>
+<div class="flex -space-x-2 mt-md">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up profile portrait of a modern professional UI designer with soft natural lighting and a minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUFHqm5MdDh3J5ahWxeZaLzUKJ378LCuKpvtm7OBUbnAWAjgrn4VDcxFQo2IjhFjV7RndnitxfW9JFH3eE-Oq-zd9KRY6wxpHzaropPnuOk5eA49PdJitDQn-c37SYAIgzYVKRf5UCbTywFr04IsUnqciszhif7CZN51bulXiFJdTwD1Z-zZ29h0BCjbkJoG2CYRT-vkmOc77sDVfJoHTvGlkYRhYlIufA0bJKDjggX1Qo4skSF1obiDV5zRnEEJYAwKlxNmhI7Dw"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young software researcher in a bright, modern corporate office environment with a professional and friendly expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYrfJKzQgfhKIImZjAE42UerW_QWC30_sYdIKgD_YsldIxZnrmrUwSlUen4tA6E8_8iKM-LEYLuoENZ4okWThAWfE9815672qBuFcPGx4FXhEi0AM8Eei3fwKMugEtz59vmfPqRcvCop-IIxWWA3P27N9a_y6a-UkKYvf30hjb46sm9pLOIJN4HS2KPYiMeMuPHZAG0_8owRb-IvihPanl-ZXeASPfmkKXiElpODizLYGWPTsmqkHWDX5fWKG_qtA02dp7zRcw618"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="High quality professional headshot of an executive in business casual attire, soft focus background of a modern glass-walled workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrb-pkiekWIIE1rXd5fISBU6oEKiTbPtaSdPsLIEGX3vBCVaVSAmHOE_RJjWRQgEzrObQ0pQ6KToqAkNIgzau42vkObpbWHrTaTBR65r7TDeFf915TZdS9BbJPyicEoo9yxZQx_fWSg38dRXS3dN2NP2u01sz03Cnn3HM5Y5yeB07Z98FQDiOYkjGA-PnSSG_dq0PZmUpgDXc_elu5tnU85tBx5HvxotLixtn89lWmqOQh8koMOyuN42FgAM6Cna0_KcDIqA-UQtQ"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-primary-container/20 flex items-center justify-center text-label-sm font-label-sm text-primary">+9</div>
+</div>
+</div>
+</section>
+<!-- Main Chart & Donut Layout (Asymmetric) -->
+<section class="grid grid-cols-12 gap-md mb-xl">
+<!-- Focus Time Trends: Large Chart -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+<div class="flex justify-between items-center mb-xl">
+<div>
+<h4 class="text-headline-md font-headline-md">Focus Time Trends</h4>
+<p class="text-body-md font-body-md text-on-surface-variant">Aggregated deep work hours per day.</p>
+</div>
+<div class="flex gap-md">
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="text-label-sm font-label-sm">This Period</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-outline-variant"></span>
+<span class="text-label-sm font-label-sm">Average</span>
+</div>
+</div>
+</div>
+<!-- Chart Area -->
+<div class="h-64 w-full relative">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none">
+<!-- Grid Lines -->
+<line stroke="#e5e7eb" stroke-dasharray="4" x1="0" x2="100%" y1="20%" y2="20%"></line>
+<line stroke="#e5e7eb" stroke-dasharray="4" x1="0" x2="100%" y1="40%" y2="40%"></line>
+<line stroke="#e5e7eb" stroke-dasharray="4" x1="0" x2="100%" y1="60%" y2="60%"></line>
+<line stroke="#e5e7eb" stroke-dasharray="4" x1="0" x2="100%" y1="80%" y2="80%"></line>
+<!-- Smooth Line Path -->
+<path class="w-full" d="M0,80 Q100,20 200,60 T400,30 T600,70 T800,20 T1000,50" fill="none" stroke="var(--tw-colors-primary)" stroke-width="3" style="stroke: #004ac6;"></path>
+<!-- Points -->
+<circle cx="10%" cy="40%" fill="#004ac6" r="4"></circle>
+<circle cx="30%" cy="65%" fill="#004ac6" r="4"></circle>
+<circle cx="50%" cy="30%" fill="#004ac6" r="4"></circle>
+<circle cx="70%" cy="50%" fill="#004ac6" r="4"></circle>
+<circle cx="90%" cy="20%" fill="#004ac6" r="4"></circle>
+</svg>
+<!-- X-Axis Labels -->
+<div class="flex justify-between mt-md pt-md border-t border-outline-variant">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Mon</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Tue</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Wed</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Thu</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Fri</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Sat</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Sun</span>
+</div>
+</div>
+</div>
+<!-- Priority Distribution Donut -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col items-center justify-center">
+<h4 class="text-headline-md font-headline-md self-start mb-xl">Priority Dist.</h4>
+<div class="relative w-48 h-48 mb-lg">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#f3f4f6" stroke-width="3"></circle>
+<!-- High Priority - Primary Blue -->
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#004ac6" stroke-dasharray="45 100" stroke-width="3"></circle>
+<!-- Medium Priority - Secondary -->
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#585f6c" stroke-dasharray="30 100" stroke-dashoffset="-45" stroke-width="3"></circle>
+<!-- Low Priority - Gray -->
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#c3c6d7" stroke-dasharray="25 100" stroke-dashoffset="-75" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-headline-lg font-headline-lg">124</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Total Tasks</span>
+</div>
+</div>
+<div class="w-full space-y-sm">
+<div class="flex justify-between items-center text-label-md font-label-md">
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span>High Priority</span>
+</div>
+<span class="text-on-surface-variant">45%</span>
+</div>
+<div class="flex justify-between items-center text-label-md font-label-md">
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span>Medium Priority</span>
+</div>
+<span class="text-on-surface-variant">30%</span>
+</div>
+<div class="flex justify-between items-center text-label-md font-label-md">
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-outline-variant"></span>
+<span>Low Priority</span>
+</div>
+<span class="text-on-surface-variant">25%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Task Distribution & Heatmap Row -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Task Distribution Grid -->
+<div class="col-span-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+<h4 class="text-headline-md font-headline-md mb-lg">Task Distribution</h4>
+<div class="space-y-md">
+<div>
+<div class="flex justify-between mb-xs">
+<span class="text-label-md font-label-md">UI Design</span>
+<span class="text-label-md font-label-md text-on-surface-variant">32h</span>
+</div>
+<div class="h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[80%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-xs">
+<span class="text-label-md font-label-md">Research</span>
+<span class="text-label-md font-label-md text-on-surface-variant">12h</span>
+</div>
+<div class="h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[40%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-xs">
+<span class="text-label-md font-label-md">Documentation</span>
+<span class="text-label-md font-label-md text-on-surface-variant">8h</span>
+</div>
+<div class="h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[25%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-xl pt-lg border-t border-outline-variant">
+<p class="text-body-md font-body-md text-on-surface-variant mb-md">Top Project Contributors</p>
+<div class="space-y-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant"></div>
+<span class="text-label-md font-label-md">Design System v2</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">bolt</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant"></div>
+<span class="text-label-md font-label-md">User Flow Research</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[18px]">history</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Productivity Heatmap (Last 6 Months) -->
+<div class="col-span-1 md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+<div class="flex justify-between items-center mb-lg">
+<h4 class="text-headline-md font-headline-md">Productivity Heatmap</h4>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Aug 2023 - Jan 2024</span>
+</div>
+<div class="overflow-x-auto hide-scrollbar">
+<div class="flex gap-1">
+<!-- Simulated columns of cells -->
+<div class="flex flex-col gap-1">
+<div class="heatmap-cell bg-surface-container"></div>
+<div class="heatmap-cell bg-primary-container/20"></div>
+<div class="heatmap-cell bg-primary-container/40"></div>
+<div class="heatmap-cell bg-primary-container/60"></div>
+<div class="heatmap-cell bg-surface-container"></div>
+<div class="heatmap-cell bg-primary-container/20"></div>
+<div class="heatmap-cell bg-surface-container"></div>
+</div>
+<!-- Generating several more columns via loop style -->
+<script>
+                            document.write(Array(24).fill(0).map(() => {
+                                const colors = ['bg-surface-container', 'bg-primary-container/20', 'bg-primary-container/40', 'bg-primary-container/60', 'bg-primary'];
+                                return `
+                                    <div class="flex flex-col gap-1">
+                                        ${Array(7).fill(0).map(() => `<div class="heatmap-cell ${colors[Math.floor(Math.random() * colors.length)]}"></div>`).join('')}
+                                    </div>
+                                `;
+                            }).join(''));
+                        </script>
+</div>
+</div>
+<div class="mt-lg flex items-center justify-between">
+<div class="flex items-center gap-md">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Less</p>
+<div class="flex gap-1">
+<div class="heatmap-cell bg-surface-container"></div>
+<div class="heatmap-cell bg-primary-container/20"></div>
+<div class="heatmap-cell bg-primary-container/40"></div>
+<div class="heatmap-cell bg-primary-container/60"></div>
+<div class="heatmap-cell bg-primary"></div>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">More</p>
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                        Activity levels based on focus duration &amp; task completions
+                    </div>
+</div>
+<!-- Bento-style extra info -->
+<div class="mt-xl grid grid-cols-2 gap-md">
+<div class="p-md bg-surface-container-low rounded-lg border border-outline-variant/30">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-xs">Longest Streak</p>
+<div class="flex items-center gap-sm">
+<h5 class="text-headline-md font-headline-md">24 Days</h5>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+</div>
+<div class="p-md bg-surface-container-low rounded-lg border border-outline-variant/30">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-xs">Consistency Score</p>
+<div class="flex items-center gap-sm">
+<h5 class="text-headline-md font-headline-md">92%</h5>
+<span class="material-symbols-outlined text-secondary">verified</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple interactivity for cards
+        document.querySelectorAll('.bg-surface-container-lowest').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+
+        // Search bar interaction simulation
+        const searchInput = document.createElement('div');
+        // This is just a placeholder for logic
+    </script>
+</body></html>

@@ -1,0 +1,27 @@
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:25:31:2531"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:28:39:2839"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:49:20:4920"}
+{"level":"error","message":"❌ MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","timestamp":"2026-06-28 12:55:00:550"}
+{"level":"error","message":"500 - error processing query: ns=momentum.tasks limit=30Tree: $and\n    $or\n        category regex /Authentication/i\n        labels regex /Authentication/i\n        TEXT : query=Authentication, language=english, caseSensitive=0, diacriticSensitive=0\n    createdBy $eq ObjectId('6a40cdbab979d6d1f181d5eb')\n    deletedAt $eq null\nSort: {}\nProj: {}\n planner returned error :: caused by :: No query solutions - /api/v1/search?q=Authentication - GET - ::1","timestamp":"2026-06-28 13:06:12:612"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:34:48:3448"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:36:20:3620"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:38:24:3824"}
+{"level":"error","message":"500 - Wrong recipient, payload audience != requiredAudience - /api/v1/auth/google - POST - ::1","timestamp":"2026-06-28 13:38:59:3859"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:18:29:1829"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:19:24:1924"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/tasks - GET - ::1","timestamp":"2026-06-28 14:19:55:1955"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:19:55:1955"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/tasks - GET - ::1","timestamp":"2026-06-28 14:51:23:5123"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:51:23:5123"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:07:527"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:49:5249"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:52:49:5249"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:23:5323"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:23:5323"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:43:5343"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 14:53:43:5343"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/auth/me - GET - ::1","timestamp":"2026-06-28 15:09:48:948"}
+{"level":"error","message":"401 - The user belonging to this token no longer exists. - /api/v1/tasks - GET - ::1","timestamp":"2026-06-28 15:09:48:948"}
