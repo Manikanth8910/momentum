@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
 import { User } from "../models/User.js";
 import { Task } from "../models/Task.js";
@@ -85,7 +86,6 @@ export const loginWithGoogle = async (idToken) => {
   // Find or create user
   let user = await User.findOne({ email });
   if (!user) {
-    const crypto = await import("crypto");
     const randomPassword = crypto.randomBytes(32).toString("hex");
 
     user = await User.create({
