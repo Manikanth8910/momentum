@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Zap, Search } from "lucide-react";
 import { apiFetch } from "../lib/api";
 
 export default function Header() {
